@@ -10,7 +10,7 @@ namespace Proxy.Laguna.Test
   public class TesteDoProxyLaguna
   {
     private ProxyLaguna proxy;
-    private static string caminho = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings";
+    private const string caminho = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings";
 
      [TestMethod]
      public void GetRegistryKeys()

@@ -4,28 +4,40 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
 namespace Proxy.Laguna.Proxy.Laguna.Core
 {
   class ProxyLagunaImpl : ProxyLaguna
   {
+    [DllImport("wininet.dll")]
+    public static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int dwBufferLength);
+    public const int INTERNET_OPTION_SETTINGS_CHANGED = 39;
+    public const int INTERNET_OPTION_REFRESH = 37;
+    bool settingsReturn, refreshReturn;
+
     private RegistryKey chaveDeRegistro;
 
-    public ProxyLagunaImpl(Microsoft.Win32.RegistryKey chaveDeRegistro)
+    public ProxyLagunaImpl(RegistryKey chaveDeRegistro)
     {
       this.chaveDeRegistro = chaveDeRegistro;
     }
-
+    
     public void AtualizarValorDeChave()
     {
       object valorChave = chaveDeRegistro.GetValue("ProxyEnable");
 
-      if (valorChave.Equals(1))
+      if (valorChave.Equals(1))//this if statement must be removed
       {
-        chaveDeRegistro.SetValue("ProxyEnable", 0);
+        chaveDeRegistro.SetValue("ProxyEnable", 0);////ahrg this is very bad, duplicate code...
+        settingsReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
+        refreshReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
+        return;
       }
-
-      chaveDeRegistro.SetValue("ProxyEnable", 1);//we need to set the registry permissions here....
+      
+      chaveDeRegistro.SetValue("ProxyEnable", 1);
+      settingsReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
+      refreshReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
     }
   }
 }
