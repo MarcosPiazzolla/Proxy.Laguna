@@ -27,15 +27,19 @@ namespace Proxy.Laguna.Proxy.Laguna.Core
     {
       object valorChave = chaveDeRegistro.GetValue("ProxyEnable");
 
-      if (valorChave.Equals(1))//this if statement must be removed
+      if (valorChave.Equals(1))
       {
-        chaveDeRegistro.SetValue("ProxyEnable", 0);////ahrg this is very bad, duplicate code...
-        settingsReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
-        refreshReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
+        chaveDeRegistro.SetValue("ProxyEnable", 0);
+        AtualizaRegistro();
         return;
       }
       
       chaveDeRegistro.SetValue("ProxyEnable", 1);
+      AtualizaRegistro();
+    }
+
+    private void AtualizaRegistro()
+    {
       settingsReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
       refreshReturn = InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
     }
